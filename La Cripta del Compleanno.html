@@ -1,195 +1,223 @@
 <!doctype html>
 <html lang="it">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>La Cripta del Compleanno</title>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-<style>
-:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#17132b;--ink:#f4e9c8;--gold:#f0c040;--panel:#241d45}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:'Press Start 2P',ui-monospace,Menlo,monospace;min-height:100vh;display:flex;justify-content:center}
-.app{width:min(100%,768px);padding:10px;display:flex;flex-direction:column;gap:10px;align-items:center;user-select:none;-webkit-user-select:none}
-.hud{width:100%;display:flex;justify-content:space-between;align-items:center;font-size:clamp(8px,2vw,11px);gap:8px;flex-wrap:wrap}
-.words{display:flex;gap:6px}
-.words i{font-style:normal;padding:5px 7px;border:2px solid #4b4378;color:#4b4378}
-.words i.on{border-color:var(--gold);color:var(--gold)}
-.stage{position:relative;width:min(100%,calc((100dvh - 250px)*4/3));aspect-ratio:4/3;border:4px solid var(--ink);overflow:hidden;background:#000}
-canvas{width:100%;height:100%;image-rendering:pixelated;display:block}
-.dlg{position:absolute;left:3%;right:3%;bottom:4%;background:var(--panel);border:3px solid var(--ink);padding:12px;font-size:clamp(8px,2.1vw,12px);line-height:1.8;cursor:pointer}
-.dlg b{color:var(--gold)}
-.dlg em{display:block;text-align:right;font-style:normal;color:#8d84c4;font-size:.8em;margin-top:6px}
-.toast{position:absolute;top:3%;left:50%;transform:translateX(-50%);background:var(--panel);border:2px solid var(--gold);color:var(--gold);padding:6px 10px;font-size:clamp(7px,1.8vw,10px);text-align:center;width:max-content;max-width:92%}
-.fin{position:absolute;inset:0;background:rgba(23,19,43,.93);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:16px;padding:16px}
-.fin h1{margin:0;font-size:clamp(15px,5.2vw,34px);line-height:1.5;color:var(--gold);text-shadow:3px 3px 0 #7a2e2e}
-.fin p{margin:0;font-size:clamp(7px,1.8vw,11px);line-height:1.8}
-.btn{font:inherit;background:var(--panel);color:var(--ink);border:3px solid var(--ink);padding:10px 12px;cursor:pointer;touch-action:none}
-.btn:active{background:var(--gold);color:#17132b}
-.fin .btn{touch-action:auto;font-size:10px;z-index:2}
-.conf{position:absolute;top:-12px;width:8px;height:8px;animation:fall linear infinite}
-@keyframes fall{to{transform:translateY(120vh) rotate(540deg)}}
-.ctl{width:100%;display:flex;justify-content:space-between;align-items:center;padding:0 6px}
-.pad{display:grid;grid-template-columns:repeat(3,48px);grid-template-rows:repeat(3,48px);gap:2px}
-.pad .btn{padding:0;font-size:14px}
-.side{display:flex;flex-direction:column;gap:10px}
-.side .btn{font-size:10px;padding:14px}
-@media (prefers-reduced-motion:reduce){.conf{animation:none}}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>La Cripta del Compleanno</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    :root { box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); --bg: #17132b; --ink: #f4e9c8; --gold: #f0c040; --panel: #241d45; }
+    html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Press Start 2P', ui-monospace, Menlo, monospace; min-height: 100vh; display: flex; justify-content: center; }
+    .app { width: min(100%, 768px); padding: 10px; display: flex; flex-direction: column; gap: 10px; align-items: center; user-select: none; -webkit-user-select: none; }
+    .hud { width: 100%; display: flex; justify-content: space-between; align-items: center; font-size: clamp(8px, 2vw, 11px); gap: 8px; flex-wrap: wrap; }
+    .words { display: flex; gap: 6px; }
+    .words i { font-style: normal; padding: 5px 7px; border: 2px solid #4b4378; color: #4b4378; }
+    .words i.on { border-color: var(--gold); color: var(--gold); }
+    .stage { position: relative; width: min(100%, calc((100dvh - 250px)*4/3)); aspect-ratio: 4/3; border: 4px solid var(--ink); overflow: hidden; background: #000; }
+    canvas { width: 100%; height: 100%; image-rendering: pixelated; display: block; }
+    .dlg { position: absolute; left: 3%; right: 3%; bottom: 4%; background: var(--panel); border: 3px solid var(--ink); padding: 12px; font-size: clamp(8px, 2.1vw, 12px); line-height: 1.8; cursor: pointer; }
+    .dlg b { color: var(--gold); }
+    .dlg em { display: block; text-align: right; font-style: normal; color: #8d84c4; font-size: .8em; margin-top: 6px; }
+    .toast { position: absolute; top: 3%; left: 50%; transform: translateX(-50%); background: var(--panel); border: 2px solid var(--gold); color: var(--gold); padding: 6px 10px; font-size: clamp(7px, 1.8vw, 10px); text-align: center; width: max-content; max-width: 92%; }
+    .fin { position: absolute; inset: 0; background: rgba(23,19,43,.93); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 16px; padding: 16px; }
+    .fin h1 { margin: 0; font-size: clamp(15px, 5.2vw, 34px); line-height: 1.5; color: var(--gold); text-shadow: 3px 3px 0 #7a2e2e; }
+    .fin p { margin: 0; font-size: clamp(7px, 1.8vw, 11px); line-height: 1.8; }
+    .btn { font: inherit; background: var(--panel); color: var(--ink); border: 3px solid var(--ink); padding: 10px 12px; cursor: pointer; touch-action: none; }
+    .btn:active { background: var(--gold); color: #17132b; }
+    .fin .btn { touch-action: auto; font-size: 10px; z-index: 2; }
+    .conf { position: absolute; top: -12px; width: 8px; height: 8px; animation: fall linear infinite; }
+    @keyframes fall { to { transform: translateY(120vh) rotate(540deg); } }
+    .ctl { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 0 6px; }
+    .pad { display: grid; grid-template-columns: repeat(3, 48px); grid-template-rows: repeat(3, 48px); gap: 2px; }
+    .pad .btn { padding: 0; font-size: 14px; }
+    .side { display: flex; flex-direction: column; gap: 10px; }
+    .side .btn { font-size: 10px; padding: 14px; }
+    @media (prefers-reduced-motion: reduce) { .conf { animation: none; } }
+  </style>
 </head>
 <body>
-<div id="root"></div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-<script>
-const {useState,useEffect,useRef}=React, h=React.createElement;
-const ROOMS=[
- {word:'Všechno',sign:'Il blocco di pietra è pesante. Spingilo sulla placca a terra per aprire la porta.',map:[
- '################','#.......C......#','#######D########','#..............#','#..S...........#','#..............#','#....B.........#','#..............#','#...........P..#','#..............#','#..@...........#','################']},
- {word:'nejlepší',sign:"Accendi le pietre nell'ordine giusto: 🟩 → 🟥 → 🟨 → 🟦. Se sbagli, si spengono tutte.",map:[
- '################','#.......C......#','#######D########','#..............#','#..S...........#','#...r......g...#','#..............#','#..............#','#...y......b...#','#..............#','#..@...........#','################']},
- {word:'k narozeninám!',sign:'Quattro leve. Due sono accese. La 1ª è spenta. La 3ª e la 4ª sono diverse. La 2ª e la 3ª sono uguali.',map:[
- '################','#.......C......#','#######D########','#..............#','#..S...........#','#..............#','#...L.L.L.L....#','#..............#','#..............#','#..............#','#..@...........#','################']}
-];
-const COL={r:'#e03a3a',g:'#3ac25a',y:'#f0d030',b:'#3a6fe0'};
-const DIRS={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]};
+  <div id="root"></div>
 
-function App(){
- const [dlg,setDlg]=useState(null),[words,setWords]=useState([]),[toast,setToast]=useState(''),[room,setRoom]=useState(0),[end,setEnd]=useState(false);
- const cv=useRef(),api=useRef({}),keys=useRef({});
- useEffect(()=>{
-  const ctx=cv.current.getContext('2d');
-  let g,D=null,ri=0,ended=false,tt,raf;
-  const say=(c,next)=>{D={c,next};setDlg(D)};
-  const closeD=()=>{const n=D&&D.next;D=null;setDlg(null);n&&n()};
-  const tst=m=>{setToast(m);clearTimeout(tt);tt=setTimeout(()=>setToast(''),2400)};
-  const load=i=>{
-   ri=i;setRoom(i);
-   const grid=ROOMS[i].map.map(s=>s.split('')),blocks=[];let x0=1,y0=1;
-   grid.forEach((row,y)=>row.forEach((c,x)=>{if(c==='@'){x0=x;y0=y;row[x]='.'}if(c==='B'){blocks.push({x,y});row[x]='.'}}));
-   g={grid,blocks,x:x0,y:y0,ox:0,oy:0,face:'up',open:false,lit:'',lev:[0,0,0,0],chest:false,t:0};
-  };
-  const unlock=()=>{g.open=true;tst('Clic! La porta si è aperta.')};
-  const solid=(x,y,blk)=>{const c=(g.grid[y]||[])[x];return !c||'#CSL'.includes(c)||(c==='D'&&(blk||!g.open))||g.blocks.some(b=>b.x===x&&b.y===y)};
-  const enter=c=>{
-   if(ri===1&&!g.open&&'rgyb'.includes(c)){
-    if(c==='gryb'[g.lit.length]){g.lit+=c;if(g.lit.length===4)unlock()}
-    else{g.lit='';tst('Sbagliato! Le pietre si spengono.')}
-   }
-  };
-  const tryMove=k=>{
-   const [dx,dy]=DIRS[k];g.face=k;const nx=g.x+dx,ny=g.y+dy;
-   const b=g.blocks.find(b=>b.x===nx&&b.y===ny);
-   if(b){
-    if(solid(nx+dx,ny+dy,1))return;
-    b.x+=dx;b.y+=dy;
-    if(!g.open&&g.blocks.some(q=>g.grid[q.y][q.x]==='P'))unlock();
-   }else if(solid(nx,ny))return;
-   g.x=nx;g.y=ny;g.ox=-dx*16;g.oy=-dy*16;enter(g.grid[ny][nx]);
-  };
-  const act=()=>{
-   if(D){closeD();return}
-   if(ended||g.ox||g.oy)return;
-   const [dx,dy]=DIRS[g.face],x=g.x+dx,y=g.y+dy,c=(g.grid[y]||[])[x];
-   if(c==='S')say(ROOMS[ri].sign);
-   else if(c==='L'){
-    const i=(x-4)/2;g.lev[i]^=1;tst('Clac! Leva '+(i+1)+(g.lev[i]?' accesa':' spenta'));
-    if(!g.open&&g.lev.join('')==='0110')unlock();
-   }else if(c==='C'&&!g.chest){
-    g.chest=true;const w=ROOMS[ri].word;setWords(a=>[...a,w]);
-    say(h('span',null,'Hai trovato una pergamena magica! C\'è scritto: ',h('b',null,w)),()=>{
-     if(ri<2)load(ri+1);else{ended=true;setEnd(true)}
-    });
-   }
-  };
-  api.current={act,reset:()=>{if(!ended&&!D)load(ri)},restart:()=>{ended=false;setEnd(false);setWords([]);load(0)}};
-  const step=dt=>{
-   g.t+=dt;const s=dt*0.1;
-   g.ox=Math.abs(g.ox)<=s?0:g.ox-Math.sign(g.ox)*s;
-   g.oy=Math.abs(g.oy)<=s?0:g.oy-Math.sign(g.oy)*s;
-   if(!g.ox&&!g.oy&&!D&&!ended){
-    const k=['up','down','left','right'].find(d=>keys.current[d]);
-    if(k)tryMove(k);
-   }
-  };
-  const draw=()=>{
-   const R=(x,y,w,hh,c,a)=>{ctx.globalAlpha=a||1;ctx.fillStyle=c;ctx.fillRect(Math.round(x),Math.round(y),w,hh);ctx.globalAlpha=1};
-   g.grid.forEach((row,y)=>row.forEach((c,x)=>{
-    const X=x*16,Y=y*16;
-    if(c==='#'){
-     R(X,Y,16,16,'#454a78');R(X,Y+7,16,1,'#2a2d52');R(X,Y+15,16,1,'#2a2d52');
-     R(X+(y%2?4:11),Y,1,7,'#2a2d52');R(X+(y%2?11:4),Y+8,1,7,'#2a2d52');R(X,Y,16,1,'#5a608f');return;
-    }
-    R(X,Y,16,16,(x+y)%2?'#c9b98c':'#bfae80');
-    if((x*7+y*3)%5===0)R(X+5,Y+9,2,1,'#a8996d');
-    if(c==='P'){R(X+2,Y+2,12,12,'#7a6a48');R(X+4,Y+4,8,8,g.blocks.some(k=>k.x===x&&k.y===y)?'#5ec26a':'#4b3f2a')}
-    else if(c==='D'){
-     if(g.open)R(X,Y,16,16,'#2a2538');
-     else{R(X,Y,16,16,'#4a2f18');[3,7,11].forEach(o=>R(X+o,Y,2,16,'#d9b36b'))}
-    }
-    else if(c==='C'){
-     R(X+2,Y+4,12,10,'#8b4a1c');R(X+2,Y+4,12,4,'#b8651f');R(X+7,Y+7,2,3,'#f5d04a');
-     if(g.chest){R(X+2,Y+1,12,3,'#b8651f');R(X+4,Y+5,8,4,'#f5d04a')}
-    }
-    else if(c==='S'){R(X+7,Y+8,2,6,'#5a3a1e');R(X+2,Y+3,12,7,'#d9b36b');R(X+4,Y+5,8,1,'#7a5a2a');R(X+4,Y+7,6,1,'#7a5a2a')}
-    else if('rgyb'.includes(c)){R(X+2,Y+2,12,12,'#6b6b7a');R(X+4,Y+4,8,8,COL[c],g.lit.includes(c)?1:.35)}
-    else if(c==='L'){
-     const on=g.lev[(x-4)/2];
-     R(X+3,Y+10,10,4,'#444');R(X+(on?10:6),Y+5,1,6,'#ccc');R(X+(on?9:5),Y+2,3,3,on?'#5ec26a':'#c33');
-    }
-   }));
-   g.blocks.forEach(b=>{const X=b.x*16,Y=b.y*16;R(X+1,Y+1,14,14,'#8d8d9c');R(X+1,Y+1,14,2,'#c6c6d6');R(X+1,Y+13,14,2,'#55556a');R(X+5,Y+5,6,6,'#74748a')});
-   const px=g.x*16+g.ox,py=g.y*16+g.oy,bob=(g.ox||g.oy)&&Math.floor(g.t/90)%2?1:0;
-   R(px+3,py+14,10,2,'#000',.25);
-   const hair='#6b3f22',skin='#f2c9a0',dr='#c0407a';
-   R(px+4,py+13-bob,3,2,'#5a2e1a');R(px+9,py+12+bob,3,2,'#5a2e1a');
-   R(px+3,py+2,10,9,hair);
-   R(px+4,py+8,8,3,dr);R(px+3,py+10,10,3,dr);R(px+3,py+12,10,1,'#8f2a5a');R(px+4,py+10,8,1,'#f0c040');
-   if(g.face==='up')R(px+3,py+1,10,9,hair);
-   else{
-    R(px+4,py+3,8,5,skin);R(px+3,py+1,10,3,hair);R(px+3,py+3,1,5,hair);R(px+12,py+3,1,5,hair);
-    if(g.face==='down'){R(px+6,py+5,1,2,'#222');R(px+9,py+5,1,2,'#222')}
-    else R(px+(g.face==='left'?5:10),py+5,1,2,'#222');
-   }
-  };
-  load(0);
-  say('Buon compleanno! Risolvi 3 enigmi per scoprire il messaggio segreto. Frecce o WASD per muoverti, SPAZIO per interagire, R per ricominciare la stanza.');
-  let last=performance.now();
-  const loop=n=>{const dt=Math.min(n-last,50);last=n;step(dt);draw();raf=requestAnimationFrame(loop)};
-  raf=requestAnimationFrame(loop);
-  const KM={ArrowUp:'up',w:'up',ArrowDown:'down',s:'down',ArrowLeft:'left',a:'left',ArrowRight:'right',d:'right'};
-  const kd=e=>{
-   const k=KM[e.key];
-   if(k){keys.current[k]=true;e.preventDefault()}
-   else if([' ','Enter','e','z'].includes(e.key)){e.preventDefault();if(!e.repeat)act()}
-   else if(e.key==='r')api.current.reset();
-  };
-  const ku=e=>{const k=KM[e.key];if(k)keys.current[k]=false};
-  addEventListener('keydown',kd);addEventListener('keyup',ku);
-  return()=>{cancelAnimationFrame(raf);removeEventListener('keydown',kd);removeEventListener('keyup',ku)};
- },[]);
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  
+  <script>
+    const { useState, useEffect, useRef } = React, h = React.createElement;
+    const ROOMS = [
+      { word: 'Všechno', sign: 'Il blocco di pietra è pesante. Spingilo sulla placca a terra per aprire la porta.', map: [
+        '################', '#.......C......#', '#######D########', '#..............#', '#..S...........#', '#..............#', '#....B.........#', '#..............#', '#...........P..#', '#..............#', '#..@...........#', '################'
+      ]},
+      { word: 'nejlepší', sign: "Accendi le pietre nell'ordine giusto: 🟩 → 🟥 → 🟨 → 🟦. Se sbagli, si spengono tutte.", map: [
+        '################', '#.......C......#', '#######D########', '#..............#', '#..S...........#', '#...r......g...#', '#..............#', '#..............#', '#...y......b...#', '#..............#', '#..@...........#', '################'
+      ]},
+      { word: 'k narozeninám!', sign: 'Quattro leve. Due sono accese. La 1ª è spenta. La 3ª e la 4ª sono diverse. La 2ª e la 3ª sono uguali.', map: [
+        '################', '#.......C......#', '#######D########', '#..............#', '#..S...........#', '#..............#', '#...L.L.L.L....#', '#..............#', '#..............#', '#..............#', '#..@...........#', '################'
+      ]}
+    ];
+    const COL = { r: '#e03a3a', g: '#3ac25a', y: '#f0d030', b: '#3a6fe0' };
+    const DIRS = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] };
 
- const hold=k=>({onPointerDown:e=>{e.preventDefault();keys.current[k]=true},onPointerUp:()=>{keys.current[k]=false},onPointerLeave:()=>{keys.current[k]=false},onPointerCancel:()=>{keys.current[k]=false}});
- const pad=(k,t,cls)=>h('button',Object.assign({className:'btn',style:{gridColumn:cls[0],gridRow:cls[1]},'aria-label':k},hold(k)),t);
- const conf=Array.from({length:36},(_,i)=>h('span',{key:i,className:'conf',style:{left:(i*37)%100+'%',background:['#f0c040','#e03a3a','#3ac25a','#3a6fe0','#f4e9c8'][i%5],animationDuration:(3+(i%5)*.5)+'s',animationDelay:-((i*0.37)%3)+'s'}}));
- return h('div',{className:'app'},
-  h('div',{className:'hud'},h('span',null,'STANZA '+(room+1)+'/3'),
-   h('span',{className:'words'},[0,1,2].map(i=>h('i',{key:i,className:words[i]?'on':''},words[i]||'???')))),
-  h('div',{className:'stage'},
-   h('canvas',{ref:cv,width:256,height:192}),
-   toast&&h('div',{className:'toast'},toast),
-   dlg&&h('div',{className:'dlg',onClick:()=>api.current.act()},dlg.c,h('em',null,'▼ SPAZIO')),
-   end&&h('div',{className:'fin'},conf,
-    h('h1',null,'Všechno nejlepší k narozeninám!'),
-    h('p',null,'Auguri di buon compleanno! 🎂'),
-    h('button',{className:'btn',onClick:()=>api.current.restart()},'Rigioca'))),
-  h('div',{className:'ctl'},
-   h('div',{className:'pad'},pad('up','▲',[2,1]),pad('left','◀',[1,2]),pad('right','▶',[3,2]),pad('down','▼',[2,3])),
-   h('div',{className:'side'},
-    h('button',{className:'btn',onPointerDown:e=>{e.preventDefault();api.current.act()}},'AZIONE'),
-    h('button',{className:'btn',onPointerDown:e=>{e.preventDefault();api.current.reset()}},'RESET'))));
-}
-ReactDOM.createRoot(document.getElementById('root')).render(h(App));
-</script>
+    function App() {
+      const [dlg, setDlg] = useState(null), [words, setWords] = useState([]), [toast, setToast] = useState(''), [room, setRoom] = useState(0), [end, setEnd] = useState(false);
+      const cv = useRef(), api = useRef({}), keys = useRef({});
+
+      useEffect(() => {
+        const ctx = cv.current.getContext('2d');
+        let g, D = null, ri = 0, ended = false, tt, raf;
+
+        const say = (c, next) => { D = { c, next }; setDlg(D); };
+        const closeD = () => { const n = D && D.next; D = null; setDlg(null); n && n(); };
+        const tst = m => { setToast(m); clearTimeout(tt); tt = setTimeout(() => setToast(''), 2400); };
+
+        const load = i => {
+          ri = i; setRoom(i);
+          const grid = ROOMS[i].map.map(s => s.split('')), blocks = []; let x0 = 1, y0 = 1;
+          grid.forEach((row, y) => row.forEach((c, x) => {
+            if (c === '@') { x0 = x; y0 = y; row[x] = '.'; }
+            if (c === 'B') { blocks.push({ x, y }); row[x] = '.'; }
+          }));
+          g = { grid, blocks, x: x0, y: y0, ox: 0, oy: 0, face: 'up', open: false, lit: '', lev: [0, 0, 0, 0], chest: false, t: 0 };
+        };
+
+        const unlock = () => { g.open = true; tst('Clic! La porta si è aperta.'); };
+        const solid = (x, y, blk) => { const c = (g.grid[y] || [])[x]; return !c || '#CSL'.includes(c) || (c === 'D' && (blk || !g.open)) || g.blocks.some(b => b.x === x && b.y === y); };
+
+        const enter = c => {
+          if (ri === 1 && !g.open && 'rgyb'.includes(c)) {
+            if (c === 'gryb'[g.lit.length]) {
+              g.lit += c;
+              if (g.lit.length === 4) unlock();
+            } else {
+              g.lit = '';
+              tst('Sbagliato! Le pietre si spengono.');
+            }
+          }
+        };
+
+        const tryMove = k => {
+          const [dx, dy] = DIRS[k]; g.face = k; const nx = g.x + dx, ny = g.y + dy;
+          const b = g.blocks.find(b => b.x === nx && b.y === ny);
+          if (b) {
+            if (solid(nx + dx, ny + dy, 1)) return;
+            b.x += dx; b.y += dy;
+            if (!g.open && g.blocks.some(q => g.grid[q.y][q.x] === 'P')) unlock();
+          } else if (solid(nx, ny)) return;
+          g.x = nx; g.y = ny; g.ox = -dx * 16; g.oy = -dy * 16; enter(g.grid[ny][nx]);
+        };
+
+        const act = () => {
+          if (D) { closeD(); return; }
+          if (ended || g.ox || g.oy) return;
+          const [dx, dy] = DIRS[g.face], x = g.x + dx, y = g.y + dy, c = (g.grid[y] || [])[x];
+          if (c === 'S') say(ROOMS[ri].sign);
+          else if (c === 'L') {
+            const i = (x - 4) / 2; g.lev[i] ^= 1; tst('Clac! Leva ' + (i + 1) + (g.lev[i] ? ' accesa' : ' spenta'));
+            if (!g.open && g.lev.join('') === '0110') unlock();
+          } else if (c === 'C' && !g.chest) {
+            g.chest = true; const w = ROOMS[ri].word; setWords(a => [...a, w]);
+            say(h('span', null, 'Hai trovato una pergamena magica! C\'è scritto: ', h('b', null, w)), () => {
+              if (ri < 2) load(ri + 1); else { ended = true; setEnd(true); }
+            });
+          }
+        };
+
+        api.current = { act, reset: () => { if (!ended && !D) load(ri); }, restart: () => { ended = false; setEnd(false); setWords([]); load(0); } };
+
+        const step = dt => {
+          g.t += dt; const s = dt * 0.1;
+          g.ox = Math.abs(g.ox) <= s ? 0 : g.ox - Math.sign(g.ox) * s;
+          g.oy = Math.abs(g.oy) <= s ? 0 : g.oy - Math.sign(g.oy) * s;
+          if (!g.ox && !g.oy && !D && !ended) {
+            const k = ['up', 'down', 'left', 'right'].find(d => keys.current[d]);
+            if (k) tryMove(k);
+          }
+        };
+
+        const draw = () => {
+          const R = (x, y, w, hh, c, a) => { ctx.globalAlpha = a || 1; ctx.fillStyle = c; ctx.fillRect(Math.round(x), Math.round(y), w, hh); ctx.globalAlpha = 1; };
+          g.grid.forEach((row, y) => row.forEach((c, x) => {
+            const X = x * 16, Y = y * 16;
+            if (c === '#') {
+              R(X, Y, 16, 16, '#454a78'); R(X, Y + 7, 16, 1, '#2a2d52'); R(X, Y + 15, 16, 1, '#2a2d52');
+              R(X + (y % 2 ? 4 : 11), Y, 1, 7, '#2a2d52'); R(X + (y % 2 ? 11 : 4), Y + 8, 1, 7, '#2a2d52'); R(X, Y, 16, 1, '#5a608f'); return;
+            }
+            R(X, Y, 16, 16, (x + y) % 2 ? '#c9b98c' : '#bfae80');
+            if ((x * 7 + y * 3) % 5 === 0) R(X + 5, Y + 9, 2, 1, '#a8996d');
+            if (c === 'P') { R(X + 2, Y + 2, 12, 12, '#7a6a48'); R(X + 4, Y + 4, 8, 8, g.blocks.some(k => k.x === x && k.y === y) ? '#5ec26a' : '#4b3f2a'); }
+            else if (c === 'D') {
+              if (g.open) R(X, Y, 16, 16, '#2a2538');
+              else { R(X, Y, 16, 16, '#4a2f18'); [3, 7, 11].forEach(o => R(X + o, Y, 2, 16, '#d9b36b')); }
+            }
+            else if (c === 'C') {
+              R(X + 2, Y + 4, 12, 10, '#8b4a1c'); R(X + 2, Y + 4, 12, 4, '#b8651f'); R(X + 7, Y + 7, 2, 3, '#f5d04a');
+              if (g.chest) { R(X + 2, Y + 1, 12, 3, '#b8651f'); R(X + 4, Y + 5, 8, 4, '#f5d04a'); }
+            }
+            else if (c === 'S') { R(X + 7, Y + 8, 2, 6, '#5a3a1e'); R(X + 2, Y + 3, 12, 7, '#d9b36b'); R(X + 4, Y + 5, 8, 1, '#7a5a2a'); R(X + 4, Y + 7, 6, 1, '#7a5a2a'); }
+            else if ('rgyb'.includes(c)) { R(X + 2, Y + 2, 12, 12, '#6b6b7a'); R(X + 4, Y + 4, 8, 8, COL[c], g.lit.includes(c) ? 1 : .35); }
+            else if (c === 'L') {
+              const on = g.lev[(x - 4) / 2];
+              R(X + 3, Y + 10, 10, 4, '#444'); R(X + (on ? 10 : 6), Y + 5, 1, 6, '#ccc'); R(X + (on ? 9 : 5), Y + 2, 3, 3, on ? '#5ec26a' : '#c33');
+            }
+          }));
+          g.blocks.forEach(b => { const X = b.x * 16, Y = b.y * 16; R(X + 1, Y + 1, 14, 14, '#8d8d9c'); R(X + 1, Y + 1, 14, 2, '#c6c6d6'); R(X + 1, Y + 13, 14, 2, '#55556a'); R(X + 5, Y + 5, 6, 6, '#74748a'); });
+          const px = g.x * 16 + g.ox, py = g.y * 16 + g.oy, bob = (g.ox || g.oy) && Math.floor(g.t / 90) % 2 ? 1 : 0;
+          R(px + 3, py + 14, 10, 2, '#000', .25);
+          const hair = '#6b3f22', skin = '#f2c9a0', dr = '#c0407a';
+          R(px + 4, py + 13 - bob, 3, 2, '#5a2e1a'); R(px + 9, py + 12 + bob, 3, 2, '#5a2e1a');
+          R(px + 3, py + 2, 10, 9, hair);
+          R(px + 4, py + 8, 8, 3, dr); R(px + 3, py + 10, 10, 3, dr); R(px + 3, py + 12, 10, 1, '#8f2a5a'); R(px + 4, py + 10, 8, 1, '#f0c040');
+          if (g.face === 'up') R(px + 3, py + 1, 10, 9, hair);
+          else {
+            R(px + 4, py + 3, 8, 5, skin); R(px + 3, py + 1, 10, 3, hair); R(px + 3, py + 3, 1, 5, hair); R(px + 12, py + 3, 1, 5, hair);
+            if (g.face === 'down') { R(px + 6, py + 5, 1, 2, '#222'); R(px + 9, py + 5, 1, 2, '#222'); }
+            else R(px + (g.face === 'left' ? 5 : 10), py + 5, 1, 2, '#222');
+          }
+        };
+
+        load(0);
+        say('Buon compleanno! Risolvi 3 enigmi per scoprire il messaggio segreto. Frecce o WASD per muoverti, SPAZIO per interagire, R per ricominciare la stanza.');
+        let last = performance.now();
+        const loop = n => { const dt = Math.min(n - last, 50); last = n; step(dt); draw(); raf = requestAnimationFrame(loop); };
+        raf = requestAnimationFrame(loop);
+
+        const KM = { ArrowUp: 'up', w: 'up', ArrowDown: 'down', s: 'down', ArrowLeft: 'left', a: 'left', ArrowRight: 'right', d: 'right' };
+        const kd = e => {
+          const k = KM[e.key];
+          if (k) { keys.current[k] = true; e.preventDefault(); }
+          else if ([' ', 'Enter', 'e', 'z'].includes(e.key)) { e.preventDefault(); if (!e.repeat) act(); }
+          else if (e.key === 'r') api.current.reset();
+        };
+        const ku = e => { const k = KM[e.key]; if (k) keys.current[k] = false; };
+        
+        addEventListener('keydown', kd); addEventListener('keyup', ku);
+        return () => { cancelAnimationFrame(raf); removeEventListener('keydown', kd); removeEventListener('keyup', ku); };
+      }, []);
+
+      const hold = k => ({ onPointerDown: e => { e.preventDefault(); keys.current[k] = true; }, onPointerUp: () => { keys.current[k] = false; }, onPointerLeave: () => { keys.current[k] = false; }, onPointerCancel: () => { keys.current[k] = false; } });
+      const pad = (k, t, cls) => h('button', Object.assign({ className: 'btn', style: { gridColumn: cls[0], gridRow: cls[1] }, 'aria-label': k }, hold(k)), t);
+      const conf = Array.from({ length: 36 }, (_, i) => h('span', { key: i, className: 'conf', style: { left: (i * 37) % 100 + '%', background: ['#f0c040', '#e03a3a', '#3ac25a', '#3a6fe0', '#f4e9c8'][i % 5], animationDuration: (3 + (i % 5) * .5) + 's', animationDelay: -((i * 0.37) % 3) + 's' } }));
+
+      return h('div', { className: 'app' },
+        h('div', { className: 'hud' }, h('span', null, 'STANZA ' + (room + 1) + '/3'),
+          h('span', { className: 'words' }, [0, 1, 2].map(i => h('i', { key: i, className: words[i] ? 'on' : '' }, words[i] || '???')))),
+        h('div', { className: 'stage' },
+          h('canvas', { ref: cv, width: 256, height: 192 }),
+          toast && h('div', { className: 'toast' }, toast),
+          dlg && h('div', { className: 'dlg', onClick: () => api.current.act() }, dlg.c, h('em', null, '▼ SPAZIO')),
+          end && h('div', { className: 'fin' }, conf,
+            h('h1', null, 'Všechno nejlepší k narozeninám!'),
+            h('p', null, 'Auguri di buon compleanno! 🎂'),
+            h('button', { className: 'btn', onClick: () => api.current.restart() }, 'Rigioca'))),
+        h('div', { className: 'ctl' },
+          h('div', { className: 'pad' }, pad('up', '▲', [2, 1]), pad('left', '◀', [1, 2]), pad('right', '▶', [3, 2]), pad('down', '▼', [2, 3])),
+          h('div', { className: 'side' },
+            h('button', { className: 'btn', onPointerDown: e => { e.preventDefault(); api.current.act(); } }, 'AZIONE'),
+            h('button', { className: 'btn', onPointerDown: e => { e.preventDefault(); api.current.reset(); } }, 'RESET'))));
+    }
+    
+    ReactDOM.createRoot(document.getElementById('root')).render(h(App));
+  </script>
 </body>
 </html>
